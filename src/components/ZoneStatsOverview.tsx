@@ -5,7 +5,8 @@ import {
   GraduationCap, 
   ShieldCheck, 
   Compass,
-  MapPin
+  MapPin,
+  AlertTriangle
 } from 'lucide-react';
 import { useSchools } from '../context/SchoolContext';
 import { ZoneCluster } from '../types';

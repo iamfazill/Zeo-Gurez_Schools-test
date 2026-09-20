@@ -126,13 +126,15 @@ const MainContent: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2.5 flex-wrap justify-center">
-                <button
-                  onClick={() => setIsExcelGuideOpen(true)}
-                  className="font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg border border-emerald-200 flex items-center gap-1.5 transition-colors"
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Excel Format & Guide</span>
-                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => setIsExcelGuideOpen(true)}
+                    className="font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg border border-emerald-200 flex items-center gap-1.5 transition-colors"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Excel Format & Guide</span>
+                  </button>
+                )}
                 {isAdmin && (
                   <button
                     onClick={() => setIsHoiProblemsLogOpen(true)}

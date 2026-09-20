@@ -167,17 +167,19 @@ export const Header: React.FC = () => {
               </button>
             )}
 
-            {/* Excel Master & Guide Button */}
-            <button
-              id="header-excel-guide-btn"
-              onClick={() => setIsExcelGuideOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-colors shadow-2xs"
-              title="View required Excel information and download sheets"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span className="hidden xl:inline">Excel</span>
-              <span>Data File</span>
-            </button>
+            {/* Excel Master & Guide Button (Administrator Only) */}
+            {isAdmin && (
+              <button
+                id="header-excel-guide-btn"
+                onClick={() => setIsExcelGuideOpen(true)}
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-colors shadow-2xs"
+                title="View required Excel information and download sheets"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                <span className="hidden xl:inline">Excel</span>
+                <span>Data File</span>
+              </button>
+            )}
 
             {/* HOI Problems Logbook Button (Administrator Only) */}
             {isAdmin && (
