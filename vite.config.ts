@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: '/Zeo-Gurez_Schools-test/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
