@@ -1,0 +1,7 @@
+{
+  "name": "Office of the ZEO Gurez - School Management Portal",
+  "description": "Official management portal for 88 schools under Office of the Zonal Education Officer Gurez, Bandipora (J&K). Developed by @Fazel. Covers establishment, planning, HOI contacts, and 3-problem institutional log.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
