@@ -166,11 +166,14 @@ const MainContent: React.FC = () => {
       <footer className="bg-white border-t border-slate-200 py-6 text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <div>
-            <span className="font-bold text-slate-800">Office of the Zonal Education Officer Gurez</span> • Directorate of School Education Kashmir • <span className="text-slate-900 font-bold">Developed by @Fazel</span>
+            <span className="font-bold text-slate-800">Office of the Zonal Education Officer Gurez</span> • Directorate of School Education Kashmir • <span className="text-slate-900 font-bold">Developed by @Fazel</span>, assisted by <span className="text-slate-900 font-bold">Firdous Ahmad Magrey - Teacher Zone Gurez</span>
           </div>
-          <div className="flex items-center gap-3 text-slate-500 flex-wrap justify-center">
+          <div className="flex items-center gap-2.5 text-slate-500 flex-wrap justify-center">
             <span className="inline-flex items-center gap-1.5 font-medium text-slate-800 bg-amber-50 text-amber-900 px-2.5 py-1 rounded-md border border-amber-200">
               Developer: <strong className="text-slate-950 font-bold">@Fazel</strong>
+            </span>
+            <span className="inline-flex items-center gap-1.5 font-medium text-slate-800 bg-blue-50 text-blue-900 px-2.5 py-1 rounded-md border border-blue-200">
+              Assisted by: <strong className="text-slate-950 font-bold">Firdous Ahmad Magrey - Teacher Zone Gurez</strong>
             </span>
             <span>•</span>
             <span>Valleys: Bagtore, Dawar, Kilshay, Tulail</span>

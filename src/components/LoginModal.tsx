@@ -255,7 +255,7 @@ export const LoginModal: React.FC = () => {
                 onChange={e => handleSelectSchoolDropdown(e.target.value)}
                 className="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
               >
-                <option value="">-- Choose from 88 Gurez Schools --</option>
+                <option value="">-- Choose from {schools.length} Gurez Zone Schools --</option>
                 {schools.map(s => (
                   <option key={s.id} value={s.id}>
                     {s.code} • {s.name}

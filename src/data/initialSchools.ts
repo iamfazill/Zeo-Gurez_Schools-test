@@ -1,106 +1,59 @@
-import { School, ZoneNotice, ZoneCluster, SchoolLevel, HoiProblem, EstablishmentInfo, PlanningInfo } from '../types';
-import { GUREZ_RAW_SCHOOLS, RawZoneSchool } from './gurezZoneData';
-
-function determineCluster(name: string): ZoneCluster {
-  const n = name.toLowerCase();
-  if (
-    n.includes('bagtore') || 
-    n.includes('tarbal') || 
-    n.includes('izmarg') || 
-    n.includes('dangan') || 
-    n.includes('kanzalwan') || 
-    n.includes('nayal') || 
-    n.includes('jalindora') || 
-    n.includes('chuntiwari') || 
-    n.includes('kuragbal')
-  ) {
-    return 'Bagtore & Kanzalwan Cluster';
-  }
-
-  if (
-    n.includes('dawar') || 
-    n.includes('markoot') || 
-    n.includes('wanpora') || 
-    n.includes('khandyal') || 
-    n.includes('badwan') || 
-    n.includes('faqirpora') || 
-    n.includes('khopree') || 
-    n.includes('mastan')
-  ) {
-    return 'Dawar Central Cluster';
-  }
-
-  if (
-    n.includes('kilshay') || 
-    n.includes('burnie') || 
-    n.includes('kashpot') || 
-    n.includes('chorwan') || 
-    n.includes('achoora') || 
-    n.includes('bulo neril') || 
-    n.includes('bayant') || 
-    n.includes('frachat')
-  ) {
-    return 'Kilshay & Chorwan Cluster';
-  }
-
-  return 'Tulail Valley Cluster';
-}
-
-function determineLevel(name: string): SchoolLevel {
-  const n = name.trim();
-  if (n.startsWith('HSS')) return 'Higher Secondary (Grades 11-12)';
-  if (n.startsWith('HS')) return 'Secondary (Grades 9-10)';
-  if (n.startsWith('PS')) return 'Primary (Grades 1-5)';
-  return 'Upper Primary (Grades 6-8)';
-}
-
-function determineGender(name: string): 'Co-educational' | 'Girls Only' | 'Boys Only' {
-  const n = name.trim();
-  if (n.startsWith('GMS') || n.includes('Girls')) return 'Girls Only';
-  if (n.startsWith('BMS') || n.includes('Boys')) return 'Boys Only';
-  return 'Co-educational';
-}
+import { 
+  School, 
+  ZoneNotice, 
+  ZoneCluster, 
+  SchoolLevel, 
+  HoiProblem, 
+  EstablishmentInfo, 
+  PlanningInfo, 
+  DetailedClassWiseEnrollment,
+  ClassGradeRoll
+} from '../types';
+import { RAW_92_SCHOOLS } from './raw92OfficialData';
 
 const LOCAL_FIRST_NAMES = [
   'Mohammad Amin', 'Ghulam Hassan', 'Nazir Ahmad', 'Bashir Ahmad', 
   'Abdul Rashid', 'Farooq Ahmad', 'Showkat Ahmad', 'Ghulam Nabi', 
   'Manzoor Ahmad', 'Tariq Ahmad', 'Mushtaq Ahmad', 'Javaid Ahmad', 
   'Fayaz Ahmad', 'Shabir Ahmad', 'Zahoor Ahmad', 'Reyaz Ahmad', 
-  'Parvaiz Ahmad', 'Altaf Hussain', 'Bilal Ahmad', 'Mehraj-ud-Din'
+  'Parvaiz Ahmad', 'Altaf Hussain', 'Bilal Ahmad', 'Mehraj-ud-Din',
+  'Mohammad Iqbal', 'Mushtaq Hussain', 'Mohammad Sultan', 'Nisar Ahmad',
+  'Ghulam Mohammad', 'Abdul Majeed', 'Mohammad Shafi', 'Khursheed Ahmad'
 ];
 
 const LOCAL_LAST_NAMES = [
   'Lone', 'Samoon', 'Rather', 'Khan', 'Dar', 
   'Mir', 'Magray', 'Sheikh', 'Bhat', 'Wani', 
-  'Chopan', 'Ganie', 'Malik', 'Tedwa', 'Bagtori'
+  'Chopan', 'Ganie', 'Malik', 'Tedwa', 'Bagtori',
+  'Chorwani', 'Dawaree', 'Tulaili'
 ];
 
-function generateHoiDetails(sNo: number, level: SchoolLevel) {
-  const first = LOCAL_FIRST_NAMES[(sNo * 7) % LOCAL_FIRST_NAMES.length];
-  const last = LOCAL_LAST_NAMES[(sNo * 11) % LOCAL_LAST_NAMES.length];
+function generateHoiDetails(sNo: number, category: string, schoolName: string) {
+  const first = LOCAL_FIRST_NAMES[(sNo * 7 + 3) % LOCAL_FIRST_NAMES.length];
+  const last = LOCAL_LAST_NAMES[(sNo * 11 + 5) % LOCAL_LAST_NAMES.length];
   const hoiName = `${first} ${last}`;
 
   let designation: 'Principal' | 'Headmaster' | 'Incharge Master' | 'Teacher Incharge';
-  if (level === 'Higher Secondary (Grades 11-12)') {
+  if (category === 'HSS') {
     designation = 'Principal';
-  } else if (level === 'Secondary (Grades 9-10)') {
+  } else if (category === 'HS') {
     designation = 'Headmaster';
-  } else if (level === 'Upper Primary (Grades 6-8)') {
+  } else if (category === 'MS') {
     designation = sNo % 2 === 0 ? 'Headmaster' : 'Incharge Master';
   } else {
     designation = 'Teacher Incharge';
   }
 
-  const prefixes = ['94190', '70068', '95963', '96224'];
+  const prefixes = ['94190', '70068', '95963', '96224', '78894'];
   const prefix = prefixes[sNo % prefixes.length];
-  const numberSuffix = String(10000 + ((sNo * 827) % 89999)).slice(0, 5);
+  const numberSuffix = String(10000 + ((sNo * 827 + 137) % 89999)).slice(0, 5);
   const hoiPhone = `+91 ${prefix} ${numberSuffix}`;
 
   return { hoiName, designation, hoiPhone };
 }
 
-function generateEstablishment(sNo: number, level: SchoolLevel): EstablishmentInfo {
-  const estYear = 1962 + ((sNo * 5) % 55);
+function generateEstablishment(sNo: number, category: string): EstablishmentInfo {
+  const estYear = 1965 + ((sNo * 5) % 52);
   const buildingStatusOptions = [
     'Government Owned (Pucca)',
     'Government Owned (Pucca)',
@@ -132,8 +85,8 @@ function generateEstablishment(sNo: number, level: SchoolLevel): EstablishmentIn
   ] as const;
   const electricityStatus = powerOptions[sNo % powerOptions.length];
 
-  const isPrimary = level === 'Primary (Grades 1-5)';
-  const isUpper = level === 'Upper Primary (Grades 6-8)';
+  const isPrimary = category === 'PS';
+  const isUpper = category === 'MS';
 
   return {
     yearOfEstablishment: estYear,
@@ -196,7 +149,7 @@ function generatePlanning(sNo: number, totalStudents: number, teachers: number):
   };
 }
 
-function generateHoiProblems(sNo: number, schoolName: string, level: SchoolLevel): HoiProblem[] {
+function generateHoiProblems(sNo: number, schoolName: string, category: string): HoiProblem[] {
   const problems: HoiProblem[] = [];
 
   // Problem 1: Infrastructure or Heavy Snow Damage (Always present as P1)
@@ -218,8 +171,13 @@ function generateHoiProblems(sNo: number, schoolName: string, level: SchoolLevel
     },
     {
       cat: 'Winter Heating & Fuel' as const,
-      title: 'Shortage of Hardwood Fuel & Bukhari Heating Units',
-      desc: 'Existing bukharis are rusted and fuel wood quota sanctioned is insufficient for harsh 6-month winter sub-zero temperatures (-18°C).'
+      title: 'Additional Hard Coke & Kerosene Fuel Quota Needed',
+      desc: 'Sanctioned firewood and hard-coke heating quota inadequate for prolonged 6-month Himalayan winter season. Additional Bukhari fuel grant requested from ZEO.'
+    },
+    {
+      cat: 'Teacher & Staff Shortage' as const,
+      title: 'Urgent Need for Mathematics and Science Subject Teacher',
+      desc: 'Key specialized teaching post vacant following transfer. Single general teacher managing multiple combined classes across grades.'
     }
   ];
 
@@ -230,23 +188,18 @@ function generateHoiProblems(sNo: number, schoolName: string, level: SchoolLevel
     category: p1.cat,
     title: p1.title,
     description: p1.desc,
-    reportedDate: '2026-08-15',
+    reportedDate: '2026-08-20',
     priority: sNo % 3 === 0 ? 'Critical / Immediate' : 'High',
-    status: sNo % 2 === 0 ? 'Pending ZEO Action' : 'Under ZEO Review',
-    zeoRemarks: 'Inspected by ZEO field team; repair proposal submitted to District Development Commissioner.'
+    status: sNo % 4 === 0 ? 'Forwarded to CEO/Directorate' : sNo % 3 === 0 ? 'Under ZEO Review' : 'Pending ZEO Action',
+    zeoRemarks: sNo % 4 === 0 ? 'Estimated DPR prepared and submitted to CEO Bandipora for disaster restoration grant.' : 'Inspection scheduled by ZEO field team.'
   });
 
-  // Problem 2: Staffing or Academic (Present in most schools)
-  if (sNo % 5 !== 0) {
+  // Problem 2: Secondary Institutional Need
+  if (sNo % 3 !== 0) {
     const p2Options = [
       {
-        cat: 'Teacher & Staff Shortage' as const,
-        title: 'Urgent Requirement of Mathematics & Science Master',
-        desc: 'Post of Teacher/Master in Science & Mathematics has remained unfilled since annual rationalization in May 2026. Upper primary students severely impacted.'
-      },
-      {
         cat: 'ICT & Smart Class' as const,
-        title: 'Solar Inverter Battery Defunct for CAL/Smart Classroom',
+        title: 'Solar Battery Replacement for Smart Class Screen',
         desc: 'Solar storage battery bank damaged due to extreme sub-zero cold. Computer Aided Learning lab non-operational since July.'
       },
       {
@@ -312,61 +265,115 @@ function generateHoiProblems(sNo: number, schoolName: string, level: SchoolLevel
   return problems;
 }
 
-export const INITIAL_88_SCHOOLS: School[] = GUREZ_RAW_SCHOOLS.map((raw: RawZoneSchool) => {
-  const cluster = determineCluster(raw.name);
-  const level = determineLevel(raw.name);
-  const gender = determineGender(raw.name);
+function determineLevel(category: string): SchoolLevel {
+  if (category === 'HSS') return 'Higher Secondary (Grades 11-12)';
+  if (category === 'HS') return 'Secondary (Grades 9-10)';
+  if (category === 'MS') return 'Upper Primary (Grades 6-8)';
+  return 'Primary (Grades 1-5)';
+}
 
-  const preTotal = raw.pre[2];
-  const priTotal = raw.pri[2];
-  const uppTotal = raw.upp[2];
-  const totalBoys = raw.pre[0] + raw.pri[0] + raw.upp[0];
-  const totalGirls = raw.pre[1] + raw.pri[1] + raw.upp[1];
-  const totalStudents = Math.max(1, preTotal + priTotal + uppTotal);
+function determineGender(name: string): 'Co-educational' | 'Girls Only' | 'Boys Only' {
+  const n = name.toUpperCase();
+  if (n.includes('GMS') || n.includes('GHS') || n.includes('GHSS') || n.includes('GIRLS') || n.includes('KGBV')) {
+    return 'Girls Only';
+  }
+  if (n.includes('BMS') || n.includes('BHSS') || n.includes('BOYS')) {
+    return 'Boys Only';
+  }
+  return 'Co-educational';
+}
+
+export const INITIAL_92_SCHOOLS: School[] = RAW_92_SCHOOLS.map(raw => {
+  const cleanUdise = raw.udise.startsWith('0') ? raw.udise : '0' + raw.udise;
+  const level = determineLevel(raw.category);
+  const gender = determineGender(raw.name);
+  const totalStudents = raw.total;
+
+  const { kg, g1, g2, g3, g4, g5, g6, g7, g8, g9, g10 } = raw.classes;
+
+  const classWise: DetailedClassWiseEnrollment = {
+    kg: { male: kg[0], female: kg[1], total: kg[0] + kg[1] },
+    grade1: { male: g1[0], female: g1[1], total: g1[0] + g1[1] },
+    grade2: { male: g2[0], female: g2[1], total: g2[0] + g2[1] },
+    grade3: { male: g3[0], female: g3[1], total: g3[0] + g3[1] },
+    grade4: { male: g4[0], female: g4[1], total: g4[0] + g4[1] },
+    grade5: { male: g5[0], female: g5[1], total: g5[0] + g5[1] },
+    grade6: { male: g6[0], female: g6[1], total: g6[0] + g6[1] },
+    grade7: { male: g7[0], female: g7[1], total: g7[0] + g7[1] },
+    grade8: { male: g8[0], female: g8[1], total: g8[0] + g8[1] },
+    grade9: { male: g9[0], female: g9[1], total: g9[0] + g9[1] },
+    grade10: { male: g10[0], female: g10[1], total: g10[0] + g10[1] },
+    totalMale: kg[0] + g1[0] + g2[0] + g3[0] + g4[0] + g5[0] + g6[0] + g7[0] + g8[0] + g9[0] + g10[0],
+    totalFemale: kg[1] + g1[1] + g2[1] + g3[1] + g4[1] + g5[1] + g6[1] + g7[1] + g8[1] + g9[1] + g10[1],
+    totalEnrollment: totalStudents
+  };
+
+  const prePrimary = {
+    boys: kg[0],
+    girls: kg[1],
+    total: kg[0] + kg[1]
+  };
+
+  const priBoys = g1[0] + g2[0] + g3[0] + g4[0] + g5[0];
+  const priGirls = g1[1] + g2[1] + g3[1] + g4[1] + g5[1];
+  const primary = {
+    boys: priBoys,
+    girls: priGirls,
+    total: priBoys + priGirls
+  };
+
+  const uppBoys = g6[0] + g7[0] + g8[0];
+  const uppGirls = g6[1] + g7[1] + g8[1];
+  const upperPrimary = {
+    boys: uppBoys,
+    girls: uppGirls,
+    total: uppBoys + uppGirls
+  };
 
   // Compute realistic teachers for Himalayan mountain zone
   let teachers = 3;
-  if (level === 'Primary (Grades 1-5)') {
+  if (raw.category === 'PS') {
     teachers = Math.max(2, Math.round(totalStudents / 8));
-  } else if (level === 'Upper Primary (Grades 6-8)') {
+  } else if (raw.category === 'MS') {
     teachers = Math.max(4, Math.round(totalStudents / 9));
-  } else if (level === 'Secondary (Grades 9-10)') {
+  } else if (raw.category === 'HS') {
     teachers = Math.max(8, Math.round(totalStudents / 10));
   } else {
     teachers = Math.max(14, Math.round(totalStudents / 11));
   }
 
-  const ptr = Math.max(1, Math.round(totalStudents / teachers));
+  const ptr = teachers > 0 ? Math.max(1, Math.round(totalStudents / teachers)) : totalStudents;
 
   const inspectionStatuses = ['Compliant', 'Compliant', 'Compliant', 'Scheduled', 'Compliant'];
   const inspectionStatus = inspectionStatuses[raw.sNo % inspectionStatuses.length] as any;
 
-  const { hoiName, designation, hoiPhone } = generateHoiDetails(raw.sNo, level);
-  const establishment = generateEstablishment(raw.sNo, level);
+  const { hoiName, designation, hoiPhone } = generateHoiDetails(raw.sNo, raw.category, raw.name);
+  const establishment = generateEstablishment(raw.sNo, raw.category);
   const planning = generatePlanning(raw.sNo, totalStudents, teachers);
-  const hoiProblems = generateHoiProblems(raw.sNo, raw.name, level);
+  const hoiProblems = generateHoiProblems(raw.sNo, raw.name, raw.category);
 
   return {
     id: `SCH-${String(raw.sNo).padStart(3, '0')}`,
-    code: raw.udise,
-    udiseCode: raw.udise,
+    code: cleanUdise,
+    udiseCode: cleanUdise,
     name: raw.name,
-    cluster: cluster,
+    cluster: raw.cluster,
     level: level,
-    category: raw.name.includes('Goodwill') ? 'Private Unaided' : 'Government / Public',
+    category: 'Government / Public',
+    officialCategory: raw.category as 'PS' | 'MS' | 'HS' | 'HSS',
     gender: gender,
     hoiName: hoiName,
     hoiDesignation: designation,
     hoiPhone: hoiPhone,
-    hoiEmail: `hoi.${raw.udise}@jk.gov.in`,
+    hoiEmail: `hoi.${cleanUdise}@jk.gov.in`,
     principalName: `${hoiName} (${designation})`,
     principalPhone: hoiPhone,
-    email: `school.${raw.udise}@jk.gov.in`,
-    address: `${raw.name.replace(/^(MS|PS|BMS|GMS|HS|HSS)\s+/, '')}, Zone Gurez / Tulail, Bandipora, J&K`,
+    email: `school.${cleanUdise}@jk.gov.in`,
+    address: `${raw.name}, Cluster ${raw.cluster}, Sub-Division Gurez, District Bandipora, UT of J&K - 193503`,
     establishedYear: establishment.yearOfEstablishment,
     totalStudents: totalStudents,
     totalTeachers: teachers,
-    supportStaff: level === 'Primary (Grades 1-5)' ? 1 : level === 'Upper Primary (Grades 6-8)' ? 2 : 5,
+    supportStaff: raw.category === 'PS' ? 1 : raw.category === 'MS' ? 2 : 5,
     classroomsCount: establishment.totalClassrooms,
     pupilTeacherRatio: ptr,
     rating: Number((4.1 + ((raw.sNo * 3) % 9) / 10).toFixed(1)),
@@ -379,16 +386,17 @@ export const INITIAL_88_SCHOOLS: School[] = GUREZ_RAW_SCHOOLS.map((raw: RawZoneS
       'Mid-day Meal Kitchen',
       'Library Corner',
       ...(totalStudents > 40 ? ['Smart Class Board', 'Sports Equipment'] : []),
-      ...(level.includes('Secondary') ? ['Science Demonstration Lab', 'Computer IT Hub'] : [])
+      ...(raw.category === 'HS' || raw.category === 'HSS' ? ['Science Demonstration Lab', 'Computer IT Hub'] : [])
     ],
     shift: 'Standard Day',
-    notes: `Official U-DISE Code: ${raw.udise}. HOI: ${hoiName} (${designation}, ${hoiPhone}). Pre-Primary Roll: ${preTotal}, Primary Roll: ${priTotal}, Upper-Primary Roll: ${uppTotal}.`,
+    notes: `Official U-DISE Code: ${cleanUdise}. Cluster: ${raw.cluster}. HOI: ${hoiName} (${designation}, ${hoiPhone}). Official Total Roll: ${totalStudents}.`,
+    classWise: classWise,
     enrollment: {
-      prePrimary: { boys: raw.pre[0], girls: raw.pre[1], total: raw.pre[2] },
-      primary: { boys: raw.pri[0], girls: raw.pri[1], total: raw.pri[2] },
-      upperPrimary: { boys: raw.upp[0], girls: raw.upp[1], total: raw.upp[2] },
-      totalBoys: totalBoys,
-      totalGirls: totalGirls
+      prePrimary: prePrimary,
+      primary: primary,
+      upperPrimary: upperPrimary,
+      totalBoys: classWise.totalMale,
+      totalGirls: classWise.totalFemale
     },
     establishment: establishment,
     planning: planning,
@@ -396,33 +404,35 @@ export const INITIAL_88_SCHOOLS: School[] = GUREZ_RAW_SCHOOLS.map((raw: RawZoneS
   };
 });
 
+// Alias for backwards compatibility
+export const INITIAL_88_SCHOOLS: School[] = INITIAL_92_SCHOOLS;
+
 export const INITIAL_NOTICES: ZoneNotice[] = [
   {
     id: 'NOT-001',
     title: 'Zone Gurez & Tulail Winter Preparedness & Heating Protocol',
     date: '2026-09-18',
     priority: 'Urgent',
-    targetClusters: 'All 4 Clusters (88 Schools)',
+    targetClusters: 'All 8 Clusters (92 Schools)',
     category: 'Safety & Winter Preparedness',
-    content: 'All Headmasters and Principals of 88 schools across Dawar, Bagtore, Kilshay, and Tulail clusters are instructed to verify Bukhari/solar heating units, winter fuel quotas, and mid-day meal provisions.'
+    content: 'All Headmasters and Principals of 92 schools across Baduab Tulail, Kilshay, Izmarg, Dawar GHSS, Dawar BHSS, Kanzalwan, Badugam, and Purana Tulail clusters are instructed to verify Bukhari/solar heating units, winter fuel quotas, and mid-day meal provisions.'
   },
   {
     id: 'NOT-002',
     title: 'Submission of Student U-DISE+ Roll & Gender Disaggregated Data',
     date: '2026-09-15',
     priority: 'High',
-    targetClusters: 'All 88 Zone Schools',
+    targetClusters: 'All 92 Zone Schools',
     category: 'Academic & Enrollment',
-    content: 'Verification of Pre-Primary, Primary, and Upper-Primary rolls (Boys & Girls) must be cross-verified against physical classroom attendance registers for the current academic session.'
+    content: 'Official Class-Wise Enrollment verification (KG through 10th Grade Boys and Girls) completed for all 92 schools across the 8 administrative cluster complexes.'
   },
   {
     id: 'NOT-003',
     title: 'Inter-Cluster Science Exhibition & Sports Meet 2026',
     date: '2026-09-10',
     priority: 'Normal',
-    targetClusters: 'Dawar Central & Tulail Clusters',
+    targetClusters: 'BHSS Dawar & HSS Purana Tulail Clusters',
     category: 'Student Competitions',
     content: 'Selected schools from GMS Wanpora, MS Badugam, and HSS Kilshay will participate in the district-level youth talent showcase in Dawar sports complex.'
   }
 ];
-

@@ -50,7 +50,7 @@ interface SchoolContextType {
   showToast: (msg: string) => void;
 }
 
-const STORAGE_KEY = 'zeo_gurez_schools_v4';
+const STORAGE_KEY = 'zeo_gurez_schools_v5_official92';
 const NOTIFICATIONS_STORAGE_KEY = 'zeo_gurez_school_notifications_v1';
 
 const INITIAL_NOTIFICATIONS: SchoolNotification[] = [
@@ -114,8 +114,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If already has new HOI fields, use it; otherwise reset to full v4 benchmark
-          if (parsed[0].hoiName && parsed[0].hoiProblems) {
+          // If already has new HOI fields and classWise data, use it; otherwise reset to full v5 benchmark
+          if (parsed[0].hoiName && parsed[0].classWise && parsed.length >= 92) {
             return parsed;
           }
         }
@@ -440,7 +440,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const resetToDefault88 = () => {
     setSchools(INITIAL_88_SCHOOLS);
     setFilters(defaultFilters);
-    showToast('Reset database to official ZEO Gurez 88-school benchmark');
+    showToast('Reset database to official ZEO Gurez 92-school cluster benchmark');
   };
 
   // Filter and sort logic
@@ -527,24 +527,15 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     let criticalHoiProblems = 0;
     let resolvedHoiProblems = 0;
 
-    const clusterCounts: Record<ZoneCluster, number> = {
-      'Bagtore & Kanzalwan Cluster': 0,
-      'Dawar Central Cluster': 0,
-      'Kilshay & Chorwan Cluster': 0,
-      'Tulail Valley Cluster': 0,
-      'North Cluster': 0,
-      'South Cluster': 0,
-      'East Cluster': 0,
-      'West Cluster': 0
-    };
+    const clusterCounts: Record<ZoneCluster, number> = {} as any;
 
     schools.forEach(s => {
       totalStudents += s.totalStudents || 0;
       totalTeachers += s.totalTeachers || 0;
       if (s.inspectionStatus === 'Compliant') compliantCount++;
       if (s.inspectionStatus === 'Action Required') actionRequiredCount++;
-      if (clusterCounts[s.cluster] !== undefined) {
-        clusterCounts[s.cluster]++;
+      if (s.cluster) {
+        clusterCounts[s.cluster] = (clusterCounts[s.cluster] || 0) + 1;
       }
       (s.hoiProblems || []).forEach(p => {
         totalHoiProblems++;

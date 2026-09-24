@@ -21,6 +21,8 @@ export const SchoolFilters: React.FC = () => {
     setViewMode 
   } = useSchools();
 
+  const uniqueClusters = Array.from(new Set(schools.map(s => s.cluster))).filter(Boolean);
+
   const isFiltered = 
     filters.search.trim() !== '' ||
     filters.cluster !== 'All' ||
@@ -115,6 +117,19 @@ export const SchoolFilters: React.FC = () => {
           <Filter className="w-3.5 h-3.5" />
           <span>Filters:</span>
         </div>
+
+        {/* Cluster */}
+        <select
+          id="filter-cluster-select"
+          value={filters.cluster}
+          onChange={e => setFilters(prev => ({ ...prev, cluster: e.target.value }))}
+          className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-medium"
+        >
+          <option value="All">All Clusters ({uniqueClusters.length})</option>
+          {uniqueClusters.map(c => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
 
         {/* Level */}
         <select

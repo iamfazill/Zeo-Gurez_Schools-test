@@ -1,4 +1,12 @@
 export type ZoneCluster = 
+  | 'HSS Baduab Tulail' 
+  | 'HSS Kilshay' 
+  | 'HSS Izmarg' 
+  | 'GHSS Dawar' 
+  | 'BHSS DAWAR' 
+  | 'HS Kanzalwan' 
+  | 'HSS Badugam' 
+  | 'HSS PTL'
   | 'Bagtore & Kanzalwan Cluster' 
   | 'Dawar Central Cluster' 
   | 'Kilshay & Chorwan Cluster' 
@@ -6,7 +14,8 @@ export type ZoneCluster =
   | 'North Cluster' 
   | 'South Cluster' 
   | 'East Cluster' 
-  | 'West Cluster';
+  | 'West Cluster'
+  | string;
 
 export type SchoolCategory = 'Government / Public' | 'Government Aided' | 'Private Unaided' | 'Special Needs / Inclusive';
 
@@ -23,6 +32,29 @@ export interface GradeRoll {
   boys: number;
   girls: number;
   total: number;
+}
+
+export interface ClassGradeRoll {
+  male: number;
+  female: number;
+  total: number;
+}
+
+export interface DetailedClassWiseEnrollment {
+  kg: ClassGradeRoll;
+  grade1: ClassGradeRoll;
+  grade2: ClassGradeRoll;
+  grade3: ClassGradeRoll;
+  grade4: ClassGradeRoll;
+  grade5: ClassGradeRoll;
+  grade6: ClassGradeRoll;
+  grade7: ClassGradeRoll;
+  grade8: ClassGradeRoll;
+  grade9: ClassGradeRoll;
+  grade10: ClassGradeRoll;
+  totalMale: number;
+  totalFemale: number;
+  totalEnrollment: number;
 }
 
 export type HoiProblemCategory = 
@@ -127,6 +159,10 @@ export interface School {
     totalBoys: number;
     totalGirls: number;
   };
+
+  // Official Class-wise Male/Female Enrollment (KG to 10th) from ZEO Records
+  classWise?: DetailedClassWiseEnrollment;
+  officialCategory?: 'PS' | 'MS' | 'HS' | 'HSS';
 
   // Comprehensive Establishment & Planning
   establishment?: EstablishmentInfo;

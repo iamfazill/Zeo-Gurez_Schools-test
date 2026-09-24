@@ -200,10 +200,10 @@ export const BulkImportModal: React.FC = () => {
             <span>Zone School Registry Tool</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Import or Paste Your 88 School Names
+            Import or Paste School Names
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-            <span className="font-semibold text-slate-900">Yes, you can provide your school names!</span> Paste your list below or upload a spreadsheet. We can map them directly onto the existing 88 records with full statistics, or create fresh entries.
+            <span className="font-semibold text-slate-900">You can provide school names or updates!</span> Paste your list below or upload a spreadsheet. We can map them directly onto the official {schools.length} records with full statistics, or create fresh entries.
           </p>
         </div>
 
@@ -280,8 +280,8 @@ export const BulkImportModal: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span>Detected: </span>
                 <span className="font-bold text-slate-800">{lines.length} School Names</span>
-                {lines.length === 88 && (
-                  <span className="text-emerald-600 font-semibold ml-1">✓ Perfect 88 match!</span>
+                {lines.length === schools.length && (
+                  <span className="text-emerald-600 font-semibold ml-1">✓ Perfect {schools.length} match!</span>
                 )}
               </div>
               <span className="text-slate-400">Numbers and bullet points are auto-stripped</span>
@@ -305,9 +305,9 @@ export const BulkImportModal: React.FC = () => {
                     className="mt-0.5 text-indigo-600 focus:ring-indigo-500"
                   />
                   <div>
-                    <div className="font-bold text-slate-900">Update Current 88 Records</div>
+                    <div className="font-bold text-slate-900">Update Current {schools.length} Records</div>
                     <div className="text-slate-500 mt-0.5 text-[11px] leading-normal">
-                      Applies your names onto the existing 88 schools while keeping complete zone faculty stats, clusters, and infrastructure ready.
+                      Applies your names onto the existing {schools.length} schools while keeping complete zone faculty stats, clusters, and infrastructure ready.
                     </div>
                   </div>
                 </label>

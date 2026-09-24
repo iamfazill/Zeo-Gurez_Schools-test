@@ -55,11 +55,17 @@ export const BottomLoginBar: React.FC = () => {
             </div>
             <div className="text-xs sm:text-sm font-semibold text-slate-200">
               {isAdmin ? (
-                <span>Signed in as <strong className="text-white font-bold">{adminAccount.email}</strong></span>
+                <span>Signed in as <strong className="text-white font-bold">{adminAccount.email}</strong> • <span className="text-xs text-slate-400 font-normal">Dev: @Fazel • Assisted by Firdous Ahmad Magrey (Teacher Zone Gurez)</span></span>
               ) : isSchool && currentSchool ? (
                 <span>Authorized Nodal Officer for <strong className="text-emerald-300 font-bold">{currentSchool.name}</strong> ({currentSchool.code})</span>
               ) : (
-                <span>Official administrative & school nodal officer login access</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span>Official administrative & school nodal officer login access</span>
+                  <span className="hidden sm:inline text-slate-500">•</span>
+                  <span className="text-xs font-normal text-slate-300">
+                    Developed by <strong className="text-amber-300 font-medium">@Fazel</strong>, assisted by <strong className="text-sky-300 font-medium">Firdous Ahmad Magrey - Teacher Zone Gurez</strong>
+                  </span>
+                </div>
               )}
             </div>
           </div>

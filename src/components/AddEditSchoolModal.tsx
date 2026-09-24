@@ -252,10 +252,14 @@ export const AddEditSchoolModal: React.FC = () => {
                   isSchool ? 'bg-slate-100 border-slate-200 cursor-not-allowed opacity-80' : 'bg-slate-50 border-slate-200 focus:outline-hidden'
                 }`}
               >
-                <option value="North Cluster">North Cluster (Dawar)</option>
-                <option value="South Cluster">South Cluster (Bagtore)</option>
-                <option value="East Cluster">East Cluster (Tulail)</option>
-                <option value="West Cluster">West Cluster (Kilshay)</option>
+                <option value="HSS Baduab Tulail">HSS Baduab Tulail Cluster</option>
+                <option value="HSS Kilshay">HSS Kilshay Cluster</option>
+                <option value="HSS Izmarg">HSS Izmarg Cluster</option>
+                <option value="GHSS Dawar">GHSS Dawar Cluster</option>
+                <option value="BHSS DAWAR">BHSS Dawar Cluster</option>
+                <option value="HS Kanzalwan">HS Kanzalwan Cluster</option>
+                <option value="HSS Badugam">HSS Badugam Cluster</option>
+                <option value="HSS PTL">HSS PTL (Purana Tulail) Cluster</option>
               </select>
             </div>
 

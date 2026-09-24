@@ -170,7 +170,7 @@ export const HoiGrievanceLogModal: React.FC = () => {
               Institutional Problems Logbook
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              Direct issues, winter challenges, and infrastructure distress reported by Headmasters & Principals across 88 schools in Gurez & Tulail.
+              Direct issues, winter challenges, and infrastructure distress reported by Headmasters & Principals across {schools.length} schools in Gurez & Tulail.
             </p>
           </div>
 
@@ -197,7 +197,7 @@ export const HoiGrievanceLogModal: React.FC = () => {
           <div className="bg-white p-3 rounded-xl border border-slate-200">
             <div className="text-slate-500 font-medium">Total Logged</div>
             <div className="text-xl font-extrabold text-slate-900 mt-0.5">{stats.total}</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">Across 88 institutions</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Across {schools.length} institutions</div>
           </div>
           <div className="bg-rose-50/70 p-3 rounded-xl border border-rose-200">
             <div className="text-rose-700 font-medium flex items-center gap-1">

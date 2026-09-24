@@ -72,7 +72,7 @@ export const NotificationCenterModal: React.FC = () => {
       title: newTitle.trim(),
       date: new Date().toISOString().slice(0, 10),
       priority: newPriority,
-      targetClusters: 'All 4 Clusters (88 Schools)',
+      targetClusters: 'All 8 Clusters (92 Schools)',
       category: newCategory,
       content: newContent.trim()
     };
@@ -81,7 +81,7 @@ export const NotificationCenterModal: React.FC = () => {
     setIsComposing(false);
     setNewTitle('');
     setNewContent('');
-    showToast('Official ZEO Circular broadcasted to all 88 schools');
+    showToast('Official ZEO Circular broadcasted to all 92 schools');
   };
 
   const formatRelativeTime = (isoString: string) => {
@@ -276,7 +276,7 @@ export const NotificationCenterModal: React.FC = () => {
                 </div>
                 <h4 className="text-sm font-bold text-slate-700">No Notifications in This Filter</h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                  Whenever any of the 88 Gurez schools update their student counts, staff rolls, or institutional problems, alerts will appear here in real time.
+                  Whenever any of the 92 Gurez zone schools update their student counts, staff rolls, or institutional problems, alerts will appear here in real time.
                 </p>
               </div>
             ) : (
@@ -474,7 +474,7 @@ export const NotificationCenterModal: React.FC = () => {
                     className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs"
                   >
                     <Send className="w-3.5 h-3.5" />
-                    <span>Broadcast to 88 Schools</span>
+                    <span>Broadcast to 92 Schools</span>
                   </button>
                 </div>
               </form>

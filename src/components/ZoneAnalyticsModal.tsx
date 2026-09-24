@@ -18,7 +18,7 @@ export const ZoneAnalyticsModal: React.FC = () => {
 
   if (!isAnalyticsOpen) return null;
 
-  const clusters: ZoneCluster[] = ['North Cluster', 'South Cluster', 'East Cluster', 'West Cluster'];
+  const clusters = Array.from(new Set(schools.map(s => s.cluster))).filter(Boolean);
 
   // Cluster breakdown data
   const clusterData = clusters.map(cluster => {

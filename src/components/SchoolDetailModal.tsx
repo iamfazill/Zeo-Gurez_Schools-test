@@ -22,7 +22,8 @@ import {
   BookOpen,
   PlusCircle,
   MessageSquare,
-  AlertCircle
+  AlertCircle,
+  GraduationCap
 } from 'lucide-react';
 import { School, HoiProblem, HoiProblemCategory, HoiProblemPriority } from '../types';
 import { useSchools } from '../context/SchoolContext';
@@ -317,8 +318,67 @@ export const SchoolDetailModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Grade-wise Roll Table */}
-              {selectedSchool.enrollment && (
+              {/* Official Class-wise Male/Female Enrollment (KG to 10th) */}
+              {selectedSchool.classWise && (
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+                  <div className="bg-emerald-50/80 px-4 py-2.5 border-b border-emerald-200/80 flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
+                      <GraduationCap className="w-4 h-4 text-emerald-700" />
+                      Official Class-Wise Enrollment (KG to 10th)
+                    </span>
+                    <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
+                      Male / Female Census
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 text-[11px]">
+                          <th className="py-2 px-4">Class</th>
+                          <th className="py-2 px-3 text-center text-blue-700">Male (Boys)</th>
+                          <th className="py-2 px-3 text-center text-pink-700">Female (Girls)</th>
+                          <th className="py-2 px-4 text-right">Class Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {[
+                          { label: 'KG (Kindergarten)', data: selectedSchool.classWise.kg },
+                          { label: 'Class 1st', data: selectedSchool.classWise.grade1 },
+                          { label: 'Class 2nd', data: selectedSchool.classWise.grade2 },
+                          { label: 'Class 3rd', data: selectedSchool.classWise.grade3 },
+                          { label: 'Class 4th', data: selectedSchool.classWise.grade4 },
+                          { label: 'Class 5th', data: selectedSchool.classWise.grade5 },
+                          { label: 'Class 6th', data: selectedSchool.classWise.grade6 },
+                          { label: 'Class 7th', data: selectedSchool.classWise.grade7 },
+                          { label: 'Class 8th', data: selectedSchool.classWise.grade8 },
+                          { label: 'Class 9th', data: selectedSchool.classWise.grade9 },
+                          { label: 'Class 10th', data: selectedSchool.classWise.grade10 },
+                        ]
+                        .filter(row => row.data.total > 0 || row.label.includes('KG') || (selectedSchool.level.includes('Primary') && row.label.includes('1st')))
+                        .map((row, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-2 px-4 font-medium text-slate-800">{row.label}</td>
+                            <td className="py-2 px-3 text-center font-mono text-slate-700">{row.data.male}</td>
+                            <td className="py-2 px-3 text-center font-mono text-slate-700">{row.data.female}</td>
+                            <td className="py-2 px-4 text-right font-bold font-mono text-slate-900">{row.data.total}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="bg-emerald-50/60 border-t border-emerald-200 font-bold text-slate-900">
+                          <td className="py-2.5 px-4 text-emerald-950 font-bold">Total Roll</td>
+                          <td className="py-2.5 px-3 text-center text-blue-800 font-mono font-bold">{selectedSchool.classWise.totalMale}</td>
+                          <td className="py-2.5 px-3 text-center text-pink-800 font-mono font-bold">{selectedSchool.classWise.totalFemale}</td>
+                          <td className="py-2.5 px-4 text-right text-emerald-950 font-mono font-extrabold text-sm">{selectedSchool.totalStudents}</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Grade-wise Roll Summary Table (Pre-Primary, Primary, Upper Primary) */}
+              {selectedSchool.enrollment && !selectedSchool.classWise && (
                 <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
                   <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">

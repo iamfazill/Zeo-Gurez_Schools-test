@@ -3,17 +3,21 @@ import {
   Building2, 
   Users, 
   GraduationCap, 
-  ShieldCheck, 
   Compass,
   MapPin,
-  AlertTriangle
+  FileSpreadsheet,
+  Unlock,
+  Download
 } from 'lucide-react';
 import { useSchools } from '../context/SchoolContext';
+import { useAuth } from '../context/AuthContext';
+import { exportZEOAllDetailsToExcel } from '../utils/excelExporter';
 import { ZoneCluster } from '../types';
 import schoolChildrenBannerImg from '../assets/images/school_children_banner_1789919369078.jpg';
 
 export const ZoneStatsOverview: React.FC = () => {
-  const { summaryStats, filters, setFilters } = useSchools();
+  const { summaryStats, filters, setFilters, schools, notices, setIsExcelGuideOpen } = useSchools();
+  const { isAdmin } = useAuth();
 
   const handleClusterClick = (clusterName: string) => {
     setFilters(prev => ({
@@ -50,7 +54,7 @@ export const ZoneStatsOverview: React.FC = () => {
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
-            Official administration directory managing all {summaryStats.totalSchools} educational institutions across Dawar, Baktore, Izmarg, and Wanpora clusters. Tracking institutional establishment, student enrollment, faculty staffing, and infrastructure.
+            Official administration directory managing all {summaryStats.totalSchools} educational institutions across the 8 administrative cluster complexes of Gurez & Tulail. Tracking institutional establishment, official class-wise student enrollment, faculty staffing, and infrastructure.
           </p>
 
           {/* Key Summary Badges */}
@@ -61,7 +65,7 @@ export const ZoneStatsOverview: React.FC = () => {
             </div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15 text-slate-100 font-medium">
               <Compass className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
-              <span>4 Clusters</span>
+              <span>{Object.keys(summaryStats.clusterCounts).filter(k => summaryStats.clusterCounts[k as ZoneCluster] > 0).length || 8} Clusters</span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15 text-slate-100 font-medium">
               <Users className="w-3.5 h-3.5 text-sky-300 shrink-0" />
@@ -80,7 +84,7 @@ export const ZoneStatsOverview: React.FC = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className={`grid gap-3 sm:gap-4 ${isAdmin ? 'grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-3'}`}>
         {/* Total Schools */}
         <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between mb-3">
@@ -96,7 +100,7 @@ export const ZoneStatsOverview: React.FC = () => {
               {summaryStats.totalSchools}
             </span>
             <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-sm">
-              4 Clusters
+              {Object.keys(summaryStats.clusterCounts).filter(k => summaryStats.clusterCounts[k as ZoneCluster] > 0).length || 8} Clusters
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-2">
@@ -147,35 +151,50 @@ export const ZoneStatsOverview: React.FC = () => {
           </p>
         </div>
 
-        {/* Inspection Compliance */}
-        <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Audit Compliance
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-              <ShieldCheck className="w-4 h-4" />
+        {/* Master Excel Database Section - Administrator Login Only */}
+        {isAdmin && (
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-emerald-300 shadow-xs flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-white to-emerald-50/40">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                  Master Excel Database
+                </span>
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 shadow-2xs">
+                  <Unlock className="w-3.5 h-3.5" />
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-extrabold text-slate-900">
+                  All Details Saved
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1 leading-tight">
+                All 92 institutions, class rolls (KG-10), HOI register, and planning stored in master file.
+              </p>
+            </div>
+            
+            <div className="mt-3 space-y-1.5">
+              <button
+                onClick={() => exportZEOAllDetailsToExcel(schools, notices, summaryStats)}
+                className="w-full py-2 px-3 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                title="Download comprehensive multi-sheet Excel spreadsheet with all app details"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download Master Excel (.xlsx)</span>
+              </button>
+              <div className="flex items-center justify-between text-[11px] text-slate-500 px-0.5">
+                <span>92 Schools • 5 Tabs</span>
+                <button
+                  onClick={() => setIsExcelGuideOpen(true)}
+                  className="text-emerald-700 hover:text-emerald-900 font-semibold underline"
+                >
+                  View Sheet Guide
+                </button>
+              </div>
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {summaryStats.compliantCount}
-            </span>
-            <span className="text-xs text-slate-500">
-              / {summaryStats.totalSchools} compliant
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs">
-            {summaryStats.actionRequiredCount > 0 ? (
-              <span className="inline-flex items-center gap-1 text-amber-700 font-medium bg-amber-50 px-1.5 py-0.5 rounded-sm">
-                <AlertTriangle className="w-3 h-3" />
-                {summaryStats.actionRequiredCount} require attention
-              </span>
-            ) : (
-              <span className="text-emerald-700 font-medium">All schools verified</span>
-            )}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Cluster Fast-Filter Badges */}

@@ -1,33 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { 
   Building2, 
   Plus, 
   BarChart3, 
   Bell, 
-  Download, 
-  RotateCcw, 
-  ChevronDown, 
   FileSpreadsheet, 
-  FileCode,
   School as SchoolIcon,
   AlertTriangle,
-  FileText,
-  BookOpen,
   Lock,
-  Unlock,
   ShieldCheck,
   Settings,
-  LogOut,
-  UserCheck
+  LogOut
 } from 'lucide-react';
 import { useSchools } from '../context/SchoolContext';
 import { useAuth } from '../context/AuthContext';
-import { 
-  exportZEOComprehensiveExcel, 
-  exportSchoolsToJSON, 
-  downloadEmptyZEOExcelTemplate, 
-  exportHoiProblemsLogToCSV 
-} from '../utils/csvHelper';
 
 export const Header: React.FC = () => {
   const { 
@@ -35,13 +21,11 @@ export const Header: React.FC = () => {
     summaryStats,
     setIsAddModalOpen, 
     setIsAnalyticsOpen, 
-    setIsCircularsOpen,
     setIsHoiProblemsLogOpen,
     setIsExcelGuideOpen,
     setIsNotificationCenterOpen,
     notifications,
     unreadNotificationsCount,
-    resetToDefault88,
     notices,
     setSelectedSchool
   } = useSchools();
@@ -55,20 +39,6 @@ export const Header: React.FC = () => {
     logout,
     adminAccount
   } = useAuth();
-
-  const [exportMenuOpen, setExportMenuOpen] = useState(false);
-  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
-  const exportRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (exportRef.current && !exportRef.current.contains(event.target as Node)) {
-        setExportMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleAddSchoolClick = () => {
     if (!isAdmin) {
@@ -225,150 +195,28 @@ export const Header: React.FC = () => {
               <BarChart3 className="w-5 h-5" />
             </button>
 
-            {/* Notification Area (School Changes & Circulars) */}
-            <button
-              id="header-notifications-btn"
-              onClick={() => setIsNotificationCenterOpen(true)}
-              className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center"
-              title={`Notification Area: ${unreadNotificationsCount} unread school updates & directives`}
-              aria-label="Notification Area"
-            >
-              <Bell className="w-5 h-5" />
-              {unreadNotificationsCount > 0 ? (
-                <span className="absolute -top-0.5 -right-1 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-rose-600 text-white shadow-xs animate-pulse">
-                  {unreadNotificationsCount}
-                </span>
-              ) : (notifications.length > 0 || notices.length > 0) ? (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500" />
-              ) : null}
-            </button>
-
-            {/* Export Menu */}
-            <div className="relative" ref={exportRef}>
+            {/* Notification Area (School Changes & Circulars - Administrator Only) */}
+            {isAdmin && (
               <button
-                id="header-export-menu-btn"
-                onClick={() => setExportMenuOpen(!exportMenuOpen)}
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors"
-                title="Export Zone Registry"
+                id="header-notifications-btn"
+                onClick={() => setIsNotificationCenterOpen(true)}
+                className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center"
+                title={`Notification Area: ${unreadNotificationsCount} unread school updates & directives`}
+                aria-label="Notification Area"
               >
-                <Download className="w-4 h-4 text-slate-500" />
-                <span className="hidden lg:inline">Export</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <Bell className="w-5 h-5" />
+                {unreadNotificationsCount > 0 ? (
+                  <span className="absolute -top-0.5 -right-1 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-rose-600 text-white shadow-xs animate-pulse">
+                    {unreadNotificationsCount}
+                  </span>
+                ) : (notifications.length > 0 || notices.length > 0) ? (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500" />
+                ) : null}
               </button>
-
-              {exportMenuOpen && (
-                <div className="absolute right-0 mt-1.5 w-64 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-40 text-xs sm:text-sm">
-                  <div className="px-3 py-1 font-semibold text-slate-400 text-[11px] uppercase tracking-wider">
-                    Office of ZEO Gurez Exports
-                  </div>
-                  
-                  <button
-                    onClick={() => {
-                      exportZEOComprehensiveExcel(schools);
-                      setExportMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 flex items-center gap-2.5"
-                  >
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <div>
-                      <div className="font-semibold text-xs">Master 88-School Excel (.csv)</div>
-                      <div className="text-[11px] text-slate-400">Establishment, Planning & HOI Log</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      downloadEmptyZEOExcelTemplate();
-                      setExportMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
-                  >
-                    <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <div>
-                      <div className="font-semibold text-xs">Blank Data Collection Sheet</div>
-                      <div className="text-[11px] text-slate-400">Excel format for sending to HOIs</div>
-                    </div>
-                  </button>
-
-                  {isAdmin && (
-                    <button
-                      onClick={() => {
-                        exportHoiProblemsLogToCSV(schools);
-                        setExportMenuOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-900 flex items-center gap-2.5"
-                    >
-                      <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                      <div>
-                        <div className="font-semibold text-xs">HOI Problems Register (.csv)</div>
-                        <div className="text-[11px] text-slate-400">Institutional problems log (Admin Only)</div>
-                      </div>
-                    </button>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      exportSchoolsToJSON(schools);
-                      setExportMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
-                  >
-                    <FileCode className="w-4 h-4 text-blue-600 shrink-0" />
-                    <div>
-                      <div className="font-semibold text-xs">Full JSON Database Backup</div>
-                      <div className="text-[11px] text-slate-400">Raw system restore file</div>
-                    </div>
-                  </button>
-
-                  <div className="my-1.5 border-t border-slate-100" />
-                  
-                  <button
-                    onClick={() => {
-                      setResetConfirmOpen(true);
-                      setExportMenuOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-rose-600 hover:bg-rose-50 flex items-center gap-2 text-xs"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Reset to Default 88 Gurez Schools
-                  </button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Reset Confirmation Modal */}
-      {resetConfirmOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
-              Reset Zone Directory?
-            </h3>
-            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-              This will reload the official benchmark registry of 88 schools across Bagtore, Dawar, Kilshay, and Tulail valleys with complete HOI contacts, establishment, planning, and 3-problem logs.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setResetConfirmOpen(false)}
-                className="px-4 py-2 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 border border-slate-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  resetToDefault88();
-                  setResetConfirmOpen(false);
-                }}
-                className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-rose-600 hover:bg-rose-700"
-              >
-                Yes, Reset to Default 88
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

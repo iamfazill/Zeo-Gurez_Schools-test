@@ -35,7 +35,7 @@ export const CircularsModal: React.FC = () => {
       title: newTitle.trim(),
       date: new Date().toISOString().slice(0, 10),
       priority: newPriority,
-      targetClusters: 'All 4 Clusters (88 Schools)',
+      targetClusters: 'All 8 Clusters (92 Schools)',
       category: newCategory,
       content: newContent.trim()
     };
@@ -66,7 +66,7 @@ export const CircularsModal: React.FC = () => {
             Official Zone Circulars & Compliance Bulletins
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Official instructions, inspection guidelines, and notifications circulated to the 88 zone schools.
+            Official instructions, inspection guidelines, and notifications circulated to the 92 zone schools.
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export const CircularsModal: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs"
               >
                 <Send className="w-3.5 h-3.5" />
-                Broadcast to 88 Schools
+                Broadcast to 92 Schools
               </button>
             </div>
           </form>
